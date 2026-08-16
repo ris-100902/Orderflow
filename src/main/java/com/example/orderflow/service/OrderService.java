@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.orderflow.dto.OrderDTO;
+import com.example.orderflow.dto.CreateOrderDTO;
 import com.example.orderflow.entity.Order;
 import com.example.orderflow.entity.OrderItem;
 import com.example.orderflow.entity.OrderLine;
@@ -46,7 +46,12 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public Order createOrder(OrderDTO dto) {
+    public Order getOrderById(Long id) {
+        Order fetchedOrder = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No such Order exists"));
+        return fetchedOrder;
+    }
+
+    public Order createOrder(CreateOrderDTO dto) {
         Order newOrder = new Order();
         newOrder.setCustomerId(dto.getCustomerId());
         List<OrderLine> orderLines = new ArrayList<>();
@@ -62,10 +67,6 @@ public class OrderService {
         newOrder.setOrderLines(orderLines);
         orderRepository.save(newOrder);
         
-        IO.println(newOrder.getCustomerId());
-        for (OrderLine l: newOrder.getOrderLines()) {
-            IO.println("OrderLine : " + l.getQuantity() + " " + l.getOrderItem().getName());
-        }
         return newOrder;
     }
 }

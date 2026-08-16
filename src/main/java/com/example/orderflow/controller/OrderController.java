@@ -4,7 +4,7 @@ import com.example.orderflow.service.OrderService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.orderflow.dto.OrderDTO;
+import com.example.orderflow.dto.CreateOrderDTO;
 import com.example.orderflow.entity.Order;
 
 import java.util.List;
@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -37,8 +39,15 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
+        Order fetchedOrder = orderService.getOrderById(id);
+        return new ResponseEntity<>(fetchedOrder, HttpStatus.OK);
+    }
+    
+
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody OrderDTO dto) {
+    public ResponseEntity<Order> createOrder(@RequestBody CreateOrderDTO dto) {
         Order createdOrder = orderService.createOrder(dto);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
