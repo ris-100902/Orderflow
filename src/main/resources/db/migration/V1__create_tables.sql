@@ -1,14 +1,14 @@
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     id BIGSERIAL PRIMARY KEY,
     customer_id VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE order_item (
+CREATE TABLE IF NOT EXISTS order_item (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE order_line (
+CREATE TABLE IF NOT EXISTS  order_line (
     id BIGSERIAL PRIMARY KEY,
     quantity INT NOT NULL,
     order_id BIGINT NOT NULL,
