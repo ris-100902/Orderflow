@@ -16,7 +16,7 @@ public class OrderLine {
     private int quantity;
 
     @ManyToOne
-    @JoinColumn(name = "orderItem_id")
+    @JoinColumn(name = "order_item_id")
     private OrderItem orderItem;
 
     public void setQuantity(int n) {this.quantity = n;}
