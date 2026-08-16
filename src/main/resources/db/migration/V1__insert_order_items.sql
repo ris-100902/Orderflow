@@ -1,4 +1,4 @@
-CREATE TABLE order (
+CREATE TABLE orders (
     id BIGSERIAL PRIMARY KEY,
     customer_id VARCHAR(255) NOT NULL
 );
@@ -14,6 +14,6 @@ CREATE TABLE order_line (
     order_id BIGINT NOT NULL,
     order_item_id BIGINT NOT NULL,
 
-    CONSTRAINT fk_order_line_order FOREIGN KEY (order_id) REFERENCES order(id),
+    CONSTRAINT fk_order_line_order FOREIGN KEY (orders_id) REFERENCES orders(id),
     CONSTRAINT fk_order_line_order_item FOREIGN KEY (order_item_id) REFERENCES order_item(id)
 );
