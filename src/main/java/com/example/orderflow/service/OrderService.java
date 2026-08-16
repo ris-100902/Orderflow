@@ -19,11 +19,14 @@ import com.example.orderflow.repository.OrderRepository;
 
 @Service
 public class OrderService {
-    @Autowired
-    private OrderItemRepository orderItemRepository;
+    
+    private final OrderItemRepository orderItemRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    private OrderRepository orderRepository;
+    public OrderService(OrderItemRepository oir, OrderRepository or) {
+        this.orderItemRepository = oir;
+        this.orderRepository = or;
+    }
 
     public List<OrderItem>getAllOrderItems() {
         return orderItemRepository.findAll();

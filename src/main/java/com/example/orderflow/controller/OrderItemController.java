@@ -2,7 +2,6 @@ package com.example.orderflow.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,8 +21,11 @@ import com.example.orderflow.service.OrderService;
 @RequestMapping("/api/v1/orderItems")
 public class OrderItemController {
 
-    @Autowired
-    private OrderService orderItemService;
+    private final OrderService orderItemService;
+
+    public OrderItemController(OrderService os) {
+        this.orderItemService = os;
+    }
 
     @GetMapping
     public List<OrderItem> getAll() {
