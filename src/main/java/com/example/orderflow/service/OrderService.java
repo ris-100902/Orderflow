@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.orderflow.dto.CreateOrderDTO;
+import com.example.orderflow.dto.OrderLineDTO;
+import com.example.orderflow.dto.ResponseOrderDTO;
 import com.example.orderflow.entity.Order;
 import com.example.orderflow.entity.OrderItem;
 import com.example.orderflow.entity.OrderLine;
@@ -68,5 +70,20 @@ public class OrderService {
         orderRepository.save(newOrder);
         
         return newOrder;
+    }
+
+    public ResponseOrderDTO convertOrderToRes(Order order) {
+        ResponseOrderDTO dto = new ResponseOrderDTO();
+        dto.setCustomerId(order.getCustomerId());
+
+        List<OrderLineDTO> l = new ArrayList<>();
+        for (OrderLine line : order.getOrderLines()) {
+            OrderLineDTO olDto = new OrderLineDTO();
+            olDto.setQuantity(line.getQuantity());
+            olDto.setProduct(line.getOrderItem().getName());
+            l.add(olDto);
+        }
+        dto.setItems(l);
+        return dto;
     }
 }

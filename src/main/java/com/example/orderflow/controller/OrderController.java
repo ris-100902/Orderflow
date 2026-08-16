@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orderflow.dto.CreateOrderDTO;
+import com.example.orderflow.dto.ResponseOrderDTO;
 import com.example.orderflow.entity.Order;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +37,19 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<Order> getAllOrders() {
-        return orderService.getAllOrders();
+    public List<ResponseOrderDTO> getAllOrders() {
+        List<ResponseOrderDTO> list = new ArrayList<>();
+        for (Order o: orderService.getAllOrders()) {
+            list.add(orderService.convertOrderToRes(o));
+        }
+        return list;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<ResponseOrderDTO> getOrderById(@PathVariable Long id) {
         Order fetchedOrder = orderService.getOrderById(id);
-        return new ResponseEntity<>(fetchedOrder, HttpStatus.OK);
+        ResponseOrderDTO dto = orderService.convertOrderToRes(fetchedOrder);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
     
 
