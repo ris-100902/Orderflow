@@ -24,4 +24,8 @@ public class OrderLine {
 
     public int getQuantity() {return this.quantity;}
     public OrderItem getOrderItem() {return this.orderItem;}
+
+    public Long getId() {
+        return id;
+    }
 }
