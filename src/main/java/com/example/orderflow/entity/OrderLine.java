@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class OrderLine {
@@ -13,6 +15,8 @@ public class OrderLine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message="quantity cannot be empty")
+    @Min(1)
     private int quantity;
 
     @ManyToOne

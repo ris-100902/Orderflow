@@ -63,7 +63,7 @@ public class OrderService {
         
         for (String product: map.keySet()) {
             OrderLine newLine = new OrderLine();
-            OrderItem item = orderItemRepository.findByName(product);
+            OrderItem item = orderItemRepository.findByName(product).orElseThrow(() -> new ResourceNotFoundException("OrderItem not Found : " + product));
             newLine.setOrderItem(item);
             newLine.setQuantity(map.get(product));
             orderLines.add(newLine);

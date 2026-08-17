@@ -3,6 +3,8 @@ package com.example.orderflow.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.orderflow.validator.Customer;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +22,7 @@ public class Order {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
+    @Customer
     private String customerId;
     
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

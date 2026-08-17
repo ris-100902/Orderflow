@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS order_item (
 CREATE TABLE IF NOT EXISTS  order_line (
     id BIGSERIAL PRIMARY KEY,
     quantity INT NOT NULL,
-    order_id BIGINT NOT NULL,
+    order_id BIGINT,
     order_item_id BIGINT NOT NULL,
 
     CONSTRAINT fk_order_line_order FOREIGN KEY (order_id) REFERENCES orders(id),
