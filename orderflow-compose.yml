@@ -7,9 +7,9 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - postgres
+      - java_db
 
-  postgres:
+  java_db:
     container_name: orderflow_container
     image: postgres:18
     restart: always
