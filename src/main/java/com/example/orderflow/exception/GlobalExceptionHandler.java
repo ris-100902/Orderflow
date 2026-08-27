@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,4 +53,9 @@ public class GlobalExceptionHandler{
         return errorResponse;
     }
 
+    @ExceptionHandler(InvalidOrderStatusException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> invalidOrderStatusException(InvalidOrderStatusException ex) {
+        return ((BodyBuilder) ResponseEntity.notFound()).body(ex.getMessage());
+    }
 }

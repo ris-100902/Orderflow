@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.orderflow.dto.CreateOrderDTO;
@@ -12,7 +16,9 @@ import com.example.orderflow.dto.ResponseOrderDTO;
 import com.example.orderflow.entity.Order;
 import com.example.orderflow.entity.OrderItem;
 import com.example.orderflow.entity.OrderLine;
+import com.example.orderflow.entity.OrderStatus;
 import com.example.orderflow.exception.ResourceNotFoundException;
+import com.example.orderflow.exception.InvalidOrderStatusException;
 import com.example.orderflow.repository.OrderItemRepository;
 import com.example.orderflow.repository.OrderRepository;
 
@@ -58,6 +64,7 @@ public class OrderService {
     public Order createOrder(CreateOrderDTO dto) {
         Order newOrder = new Order();
         newOrder.setCustomerId(dto.getCustomerId());
+        newOrder.setStatus(dto.getStatus() == null ? OrderStatus.PENDING : dto.getStatus());
         List<OrderLine> orderLines = new ArrayList<>();
         Map<String,Integer> map = dto.getItems();
         
@@ -77,6 +84,7 @@ public class OrderService {
     public ResponseOrderDTO convertOrderToRes(Order order) {
         ResponseOrderDTO dto = new ResponseOrderDTO();
         dto.setCustomerId(order.getCustomerId());
+        dto.setStatus(order.getStatus());
 
         List<OrderLineDTO> l = new ArrayList<>();
         for (OrderLine line : order.getOrderLines()) {
@@ -87,5 +95,18 @@ public class OrderService {
         }
         dto.setItems(l);
         return dto;
+    }
+
+    public Page<Order> getOrders(String status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Order::getId));
+        if (status==null) {
+            return orderRepository.findAll(pageable);
+        }
+        try {
+            OrderStatus st = OrderStatus.valueOf(status.toUpperCase());
+            return orderRepository.findByStatus(st, pageable);
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidOrderStatusException("Invalid order status: " + status);
+        }
     }
 }

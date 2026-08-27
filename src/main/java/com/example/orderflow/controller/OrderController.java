@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.orderflow.dto.CreateOrderDTO;
 import com.example.orderflow.dto.ResponseOrderDTO;
 import com.example.orderflow.entity.Order;
 import com.example.orderflow.service.OrderService;
-
 
 
 
@@ -30,7 +30,7 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<ResponseOrderDTO> getAllOrders() {
         List<ResponseOrderDTO> list = new ArrayList<>();
         for (Order o: orderService.getAllOrders()) {
@@ -45,7 +45,15 @@ public class OrderController {
         ResponseOrderDTO dto = orderService.convertOrderToRes(fetchedOrder);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
-    
+
+    @GetMapping
+    public List<ResponseOrderDTO> getOrdersByFilters(
+        @RequestParam(required=false) String status,
+        @RequestParam(defaultValue="0") int page,
+        @RequestParam(defaultValue="1") int size
+    ) {
+        return orderService.getOrders(status, page, size).map(orderService::convertOrderToRes).getContent();
+    }
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody CreateOrderDTO dto) {
