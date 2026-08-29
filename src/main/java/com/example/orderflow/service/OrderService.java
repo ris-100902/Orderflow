@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.example.orderflow.dto.ChangeStatusDTO;
 import com.example.orderflow.dto.CreateOrderDTO;
 import com.example.orderflow.dto.OrderLineDTO;
 import com.example.orderflow.dto.ResponseOrderDTO;
@@ -17,8 +18,8 @@ import com.example.orderflow.entity.Order;
 import com.example.orderflow.entity.OrderItem;
 import com.example.orderflow.entity.OrderLine;
 import com.example.orderflow.entity.OrderStatus;
-import com.example.orderflow.exception.ResourceNotFoundException;
 import com.example.orderflow.exception.InvalidOrderStatusException;
+import com.example.orderflow.exception.ResourceNotFoundException;
 import com.example.orderflow.repository.OrderItemRepository;
 import com.example.orderflow.repository.OrderRepository;
 
@@ -97,16 +98,28 @@ public class OrderService {
         return dto;
     }
 
+    private OrderStatus parseStatus(String status) {
+        try {
+            return OrderStatus.valueOf(status);
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidOrderStatusException("Invalid order status: " + status);
+        }
+    }
+
     public Page<Order> getOrders(String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Order::getId));
         if (status==null) {
             return orderRepository.findAll(pageable);
         }
-        try {
-            OrderStatus st = OrderStatus.valueOf(status.toUpperCase());
-            return orderRepository.findByStatus(st, pageable);
-        } catch (IllegalArgumentException ex) {
-            throw new InvalidOrderStatusException("Invalid order status: " + status);
-        }
+        OrderStatus st = parseStatus(status.toUpperCase());
+        return orderRepository.findByStatus(st, pageable);
+    }
+
+    public Order changeStatus(Long id, ChangeStatusDTO dto) {
+        Order currOrder = getOrderById(id);
+        OrderStatus st = parseStatus(dto.getStatus().toUpperCase());
+        currOrder.setStatus(st);
+        orderRepository.save(currOrder);
+        return currOrder;
     }
 }

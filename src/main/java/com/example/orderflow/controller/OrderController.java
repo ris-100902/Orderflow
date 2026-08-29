@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.orderflow.dto.ChangeStatusDTO;
 import com.example.orderflow.dto.CreateOrderDTO;
 import com.example.orderflow.dto.ResponseOrderDTO;
 import com.example.orderflow.entity.Order;
@@ -60,5 +62,10 @@ public class OrderController {
         Order createdOrder = orderService.createOrder(dto);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
-    
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ResponseOrderDTO> changeOrderStatus(@PathVariable Long id, @RequestBody ChangeStatusDTO dto) {
+        Order fetchedOrder = orderService.changeStatus(id, dto);
+        return ResponseEntity.ok().body(orderService.convertOrderToRes(fetchedOrder));
+    }
 }
