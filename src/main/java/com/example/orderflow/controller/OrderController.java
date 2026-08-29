@@ -51,10 +51,11 @@ public class OrderController {
     @GetMapping
     public List<ResponseOrderDTO> getOrdersByFilters(
         @RequestParam(required=false) String status,
+        @RequestParam(required=false) String customer,
         @RequestParam(defaultValue="0") int page,
-        @RequestParam(defaultValue="1") int size
+        @RequestParam(defaultValue="2") int size
     ) {
-        return orderService.getOrders(status, page, size).map(orderService::convertOrderToRes).getContent();
+        return orderService.getOrders(status, customer, page, size).map(orderService::convertOrderToRes).getContent();
     }
 
     @PostMapping

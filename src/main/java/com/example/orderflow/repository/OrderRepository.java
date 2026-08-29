@@ -9,4 +9,6 @@ import com.example.orderflow.entity.OrderStatus;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findByStatus(OrderStatus status, Pageable pageable);
+    Page<Order> findByCustomerId(String id, Pageable pageable);
+    Page<Order> findByStatusAndCustomerId(OrderStatus status, String id, Pageable pageable);
 }

@@ -1,0 +1,1 @@
+CREATE INDEX status_and_customer_idx ON orders (customer_id, order_status);

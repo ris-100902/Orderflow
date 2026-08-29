@@ -117,13 +117,18 @@ public class OrderService {
         return (currStatus!=OrderStatus.COMPLETED || currStatus!=OrderStatus.FAILED);
 }
 
-    public Page<Order> getOrders(String status, int page, int size) {
+    public Page<Order> getOrders(String status, String customer, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Order::getId));
-        if (status==null) {
+        if (status==null && customer==null) {
             return orderRepository.findAll(pageable);
+        } else if (customer==null) {
+            OrderStatus st = parseStatus(status.toUpperCase());
+            return orderRepository.findByStatus(st, pageable);
+        } else if (status==null) {
+            return orderRepository.findByCustomerId(customer, pageable);
         }
         OrderStatus st = parseStatus(status.toUpperCase());
-        return orderRepository.findByStatus(st, pageable);
+        return orderRepository.findByStatusAndCustomerId(st, customer, pageable);
     }
 
     public Order changeStatus(Long id, ChangeStatusDTO dto) {
