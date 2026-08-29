@@ -58,4 +58,10 @@ public class GlobalExceptionHandler{
     public ResponseEntity<String> invalidOrderStatusException(InvalidOrderStatusException ex) {
         return ((BodyBuilder) ResponseEntity.notFound()).body(ex.getMessage());
     }
+
+    @ExceptionHandler(InvalidOrderStatusChangeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> invalidOrderStatusChangeException(InvalidOrderStatusChangeException ex) {
+        return ((BodyBuilder) ResponseEntity.badRequest()).body(ex.getMessage());
+    }
 }

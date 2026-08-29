@@ -18,6 +18,7 @@ import com.example.orderflow.entity.Order;
 import com.example.orderflow.entity.OrderItem;
 import com.example.orderflow.entity.OrderLine;
 import com.example.orderflow.entity.OrderStatus;
+import com.example.orderflow.exception.InvalidOrderStatusChangeException;
 import com.example.orderflow.exception.InvalidOrderStatusException;
 import com.example.orderflow.exception.ResourceNotFoundException;
 import com.example.orderflow.repository.OrderItemRepository;
@@ -106,6 +107,16 @@ public class OrderService {
         }
     }
 
+    private boolean changeStatusPossible(OrderStatus currStatus, OrderStatus newStatus) {
+        if (currStatus==OrderStatus.PENDING) {
+            if (newStatus!=OrderStatus.PROCESSING && newStatus!=OrderStatus.CANCELLED) return false;
+        }
+        else if (currStatus==OrderStatus.PROCESSING) {
+            if (newStatus!=OrderStatus.COMPLETED && newStatus!=OrderStatus.FAILED) return false;
+        }
+        return (currStatus!=OrderStatus.COMPLETED || currStatus!=OrderStatus.FAILED);
+}
+
     public Page<Order> getOrders(String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Order::getId));
         if (status==null) {
@@ -118,6 +129,9 @@ public class OrderService {
     public Order changeStatus(Long id, ChangeStatusDTO dto) {
         Order currOrder = getOrderById(id);
         OrderStatus st = parseStatus(dto.getStatus().toUpperCase());
+        if (!changeStatusPossible(currOrder.getStatus(), st)) {
+            throw new InvalidOrderStatusChangeException("Invalid state transition : from " + currOrder.getStatus() + " to " +st);
+        }
         currOrder.setStatus(st);
         orderRepository.save(currOrder);
         return currOrder;
