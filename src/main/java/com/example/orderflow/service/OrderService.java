@@ -24,6 +24,8 @@ import com.example.orderflow.exception.ResourceNotFoundException;
 import com.example.orderflow.repository.OrderItemRepository;
 import com.example.orderflow.repository.OrderRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class OrderService {
     
@@ -131,6 +133,7 @@ public class OrderService {
         return orderRepository.findByStatusAndCustomerId(st, customer, pageable);
     }
 
+    @Transactional
     public Order changeStatus(Long id, ChangeStatusDTO dto) {
         Order currOrder = getOrderById(id);
         OrderStatus st = parseStatus(dto.getStatus().toUpperCase());
