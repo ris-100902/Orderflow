@@ -25,7 +25,9 @@ import com.example.orderflow.repository.OrderItemRepository;
 import com.example.orderflow.repository.OrderRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class OrderService {
     
@@ -46,7 +48,10 @@ public class OrderService {
     }
 
     public OrderItem getOrderItemById(Long id) {
-        OrderItem item = orderItemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No such orderItem exists"));
+        OrderItem item = orderItemRepository.findById(id).orElseThrow(() -> {
+            log.warn("No such orderItem exists");
+            return new ResourceNotFoundException("No such orderItem exists");
+        });
         return item;
     }
 
@@ -61,7 +66,11 @@ public class OrderService {
     }
 
     public Order getOrderById(Long id) {
-        Order fetchedOrder = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No such Order exists"));
+        log.debug("Fetching order with id: {}", id);
+        Order fetchedOrder = orderRepository.findById(id).orElseThrow(() -> {
+            log.warn("Order not found with id: {}", id);
+            return new ResourceNotFoundException("No such Order exists");
+        });
         return fetchedOrder;
     }
 
@@ -74,7 +83,10 @@ public class OrderService {
         
         for (String product: map.keySet()) {
             OrderLine newLine = new OrderLine();
-            OrderItem item = orderItemRepository.findByName(product).orElseThrow(() -> new ResourceNotFoundException("OrderItem not Found : " + product));
+            OrderItem item = orderItemRepository.findByName(product).orElseThrow(() -> {
+                log.warn("Order not found with name: {}",product);
+                return new ResourceNotFoundException("OrderItem not Found : " + product);
+            });
             newLine.setOrderItem(item);
             newLine.setQuantity(map.get(product));
             orderLines.add(newLine);
@@ -138,6 +150,7 @@ public class OrderService {
         Order currOrder = getOrderById(id);
         OrderStatus st = parseStatus(dto.getStatus().toUpperCase());
         if (!changeStatusPossible(currOrder.getStatus(), st)) {
+            log.warn("Invalid state transition : from " + currOrder.getStatus() + " to " +st);
             throw new InvalidOrderStatusChangeException("Invalid state transition : from " + currOrder.getStatus() + " to " +st);
         }
         currOrder.setStatus(st);

@@ -17,4 +17,14 @@ public class CreateOrderDTO {
     public String getCustomerId() {return this.customerId;}
     public Map<String, Integer>getItems() {return this.items;}
     public OrderStatus getStatus() {return this.status;}
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("CustomerId : " + customerId);
+        sb.append("\nItems : ");
+        items.forEach((k,v) -> sb.append("\nKey = "+ k + ", Value = " + v));
+        sb.append("\nstatus : " + status);
+        return sb.toString();
+    }
 }

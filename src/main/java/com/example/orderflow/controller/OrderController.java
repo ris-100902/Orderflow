@@ -20,8 +20,10 @@ import com.example.orderflow.dto.ResponseOrderDTO;
 import com.example.orderflow.entity.Order;
 import com.example.orderflow.service.OrderService;
 
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/orders")
 public class OrderController {
@@ -38,6 +40,7 @@ public class OrderController {
         for (Order o: orderService.getAllOrders()) {
             list.add(orderService.convertOrderToRes(o));
         }
+        log.info("GET /api/v1/orders/all - Total orders = " + list.size());
         return list;
     }
 
@@ -45,6 +48,7 @@ public class OrderController {
     public ResponseEntity<ResponseOrderDTO> getOrderById(@PathVariable Long id) {
         Order fetchedOrder = orderService.getOrderById(id);
         ResponseOrderDTO dto = orderService.convertOrderToRes(fetchedOrder);
+        log.info("GET /api/v1/orders/" + id + " - status=" + fetchedOrder.getStatus());
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -55,18 +59,22 @@ public class OrderController {
         @RequestParam(defaultValue="0") int page,
         @RequestParam(defaultValue="2") int size
     ) {
+        log.info("GET /api/v1/orders");
+        log.info("Paginated orders - page=" + page + " size=" + size);
         return orderService.getOrders(status, customer, page, size).map(orderService::convertOrderToRes).getContent();
     }
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody CreateOrderDTO dto) {
         Order createdOrder = orderService.createOrder(dto);
+        log.info("POST /api/v1/orders - Created Order - " + dto);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<ResponseOrderDTO> changeOrderStatus(@PathVariable Long id, @RequestBody ChangeStatusDTO dto) {
         Order fetchedOrder = orderService.changeStatus(id, dto);
+        log.info("PATCH /api/v1/orders/" + id + "Updated Status - " + dto.getStatus());
         return ResponseEntity.ok().body(orderService.convertOrderToRes(fetchedOrder));
     }
 }
