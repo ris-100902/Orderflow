@@ -1,9 +1,8 @@
-tools {
-    jdk 'JDK25'
-}
-
 pipeline {
     agent any
+    tools {
+        jdk 'JDK25'
+    }
     stages{
         stage('Checkout') {
             steps {
@@ -14,7 +13,7 @@ pipeline {
             steps{
                 echo 'Build stage'
                 sh 'java -version'
-                sh 'echo $JAVA_HOME'
+                echo "JAVA_HOME = ${env.JAVA_HOME}"
                 sh './gradlew clean compileJava'
             }
         }
@@ -30,6 +29,22 @@ pipeline {
             steps{
                 sh './gradlew bootJar'
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Finished job'
+            cleanWs()
+        }
+        success {
+            echo 'Success'
+        }
+        unstable{
+            echo 'Unstable'
+        }
+        failure {
+            echo 'Failure'
         }
     }
 }
