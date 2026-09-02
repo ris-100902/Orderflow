@@ -1,3 +1,7 @@
+tools {
+    jdk 'JDK25'
+}
+
 pipeline {
     agent any
     stages{
@@ -9,6 +13,8 @@ pipeline {
         stage('Build') {
             steps{
                 echo 'Build stage'
+                sh 'java -version'
+                sh 'echo $JAVA_HOME'
                 sh './gradlew clean compileJava'
             }
         }
