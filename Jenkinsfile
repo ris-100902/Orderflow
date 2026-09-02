@@ -35,6 +35,11 @@ pipeline {
     post {
         always {
             echo 'Finished job'
+            archiveArtifacts artifacts: '''
+                build/libs/*.jar,
+                build/logs/*.log
+            ''', fingerprint: true
+            junit 'build/test-results/test/*.xml'
             cleanWs()
         }
         success {
