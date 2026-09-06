@@ -22,6 +22,8 @@ services:
       - pgdata:/var/lib/postgresql
 
   jenkins:
+    group_add:
+      - "964"
     build:
       context: .
       dockerfile: jenkins/Dockerfile
@@ -31,6 +33,7 @@ services:
       - "50000:50000"
     volumes:
       - jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
 volumes:
   pgdata:
   jenkins_data:
