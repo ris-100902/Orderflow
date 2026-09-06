@@ -12,11 +12,13 @@ pipeline {
         }
         stage('Build') {
             steps{
-                echo 'Build stage'
-                sh 'java -version'
-                echo "JAVA_HOME = ${env.JAVA_HOME}"
-                helpers = load 'jenkins/buildJavaService.groovy'
-                helpers.buildService()
+                script {
+                    echo 'Build stage'
+                    sh 'java -version'
+                    echo "JAVA_HOME = ${env.JAVA_HOME}"
+                    helpers = load 'jenkins/buildJavaService.groovy'
+                    helpers.buildService()
+                }
             }
         }
 
