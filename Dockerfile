@@ -1,5 +1,15 @@
-FROM eclipse-temurin:25-jdk
+FROM eclipse-temurin:25-jdk AS builder
 
-COPY build/libs/orderflow-0.0.1-SNAPSHOT.jar orderflow_app-1.0.0.jar
+WORKDIR ./
+
+COPY . .
+
+RUN ./gradlew bootJar --no-daemon
+
+FROM eclipse-temurin:25-jre
+
+WORKDIR ./
+
+COPY --from=builder /app/build/libs/orderflow-0.0.1-SNAPSHOT.jar orderflow_app-1.0.0.jar
 
 ENTRYPOINT ["java", "-jar", "orderflow_app-1.0.0.jar"]

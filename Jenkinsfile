@@ -1,3 +1,4 @@
+def helpers
 pipeline {
     agent any
     tools {
@@ -14,7 +15,8 @@ pipeline {
                 echo 'Build stage'
                 sh 'java -version'
                 echo "JAVA_HOME = ${env.JAVA_HOME}"
-                sh './gradlew clean compileJava'
+                helpers = load 'jenkins/buildJavaService.groovy'
+                helpers.buildService()
             }
         }
 
@@ -28,6 +30,15 @@ pipeline {
         stage('Package') {
             steps{
                 sh './gradlew bootJar'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    helpers = load 'jenkins/buildAndPushImage.groovy'
+                    env.IMAGE_TAG = helpers.buildImage('orderflow')
+                }
             }
         }
     }
