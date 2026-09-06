@@ -9,11 +9,12 @@ def buildImage(String imageName) {
 
     echo "Building Docker Image: ${imageTag}"
 
-    sh "docker build -t ${imageTag}"
+    sh "docker build -t ${imageTag} ."
     sh "docker save ${imageTag} -o ${archiveName}"
 
     archiveArtifacts artifacts: archiveName, fingerprint: true
 
     return imageTag
 }
+
 return this
